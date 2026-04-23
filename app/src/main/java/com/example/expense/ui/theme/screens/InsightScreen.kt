@@ -101,20 +101,15 @@ fun InsightScreen(
         .entries
         .sortedByDescending { it.value }
 
-    val goodPercent = if (totalIncome > 0 && totalExpense > 0) {
-        ((totalIncome - totalExpense) / totalIncome * 100).coerceIn(0.0, 100.0).toInt()
-    } else if (totalExpense == 0.0) {
-        100
-    } else {
-        0
-    }
+    val goodPercent = ((totalIncome - totalExpense).coerceAtLeast(0.0) /
+            totalIncome.coerceAtLeast(1.0) * 100).toInt().coerceIn(0, 100)
 
     val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
 
     Scaffold(
         bottomBar = {
             BottomNavBar(
-                currentRoute = NavRoute.Insights,
+                currentRoute = NavRoute.Expenses,
                 onHomeClick = onBackClick,
                 onHistoryClick = {},
                 onInsightsClick = {},

@@ -50,6 +50,8 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val MASKED_CARD_NUMBER = "**** **** **** 1234"
+
 @Composable
 fun HomeScreen(
     expenses: List<Expense>,
@@ -217,7 +219,7 @@ private fun BalanceCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "**** **** **** 1234",
+                        text = MASKED_CARD_NUMBER,
                         color = Color.White.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         letterSpacing = 2.sp
@@ -293,7 +295,7 @@ private fun ActivityItem(
     }
 }
 
-enum class NavRoute { Home, History, Insights, Profile }
+enum class NavRoute { Home, History, Expenses, Profile }
 
 @Composable
 fun BottomNavBar(
@@ -317,9 +319,9 @@ fun BottomNavBar(
             label = { Text("History") }
         )
         NavigationBarItem(
-            selected = currentRoute == NavRoute.Insights,
+            selected = currentRoute == NavRoute.Expenses,
             onClick = onInsightsClick,
-            icon = { Icon(Icons.Default.PieChart, contentDescription = "Insights") },
+            icon = { Icon(Icons.Default.PieChart, contentDescription = "Expenses") },
             label = { Text("Expenses") }
         )
         NavigationBarItem(
