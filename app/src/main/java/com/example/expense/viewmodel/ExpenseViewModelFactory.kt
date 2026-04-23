@@ -2,15 +2,15 @@ package com.example.expense.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.expense.repository.ExpenseRepository
+import com.example.expense.service.ExpenseService
 
 class ExpenseViewModelFactory(
-    private val repository: ExpenseRepository
+    private val service: ExpenseService
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ExpenseViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ExpenseViewModel(repository) as T
+            return ExpenseViewModel(service) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
