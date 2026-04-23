@@ -107,14 +107,15 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
                 onAddClick = { navController.navigate(Destinations.ADD) },
                 onInsightsClick = { navController.navigate(Destinations.INSIGHTS) },
                 onExpenseClick = { id -> navController.navigate("${Destinations.DETAILS_PREFIX}/$id") },
-                onViewAllClick = { navController.navigate(Destinations.EXPENSES) }
+                onViewAllClick = { navController.navigate(Destinations.EXPENSES) },
+                onHistoryClick = { navController.navigate(Destinations.EXPENSES) }
             )
         }
 
         composable(Destinations.ADD) {
             AddExpenseScreen(
-                onSaveClick = { title, amount, location ->
-                    val isSaved = expenseViewModel.addExpense(title, amount, location)
+                onSaveClick = { title, amount, location, isIncome ->
+                    val isSaved = expenseViewModel.addExpense(title, amount, location, isIncome)
                     if (isSaved) {
                         navController.popBackStack()
                     }
@@ -127,7 +128,8 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
         composable(Destinations.INSIGHTS) {
             InsightScreen(
                 expenses = expenses,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onAddClick = { navController.navigate(Destinations.ADD) }
             )
         }
 

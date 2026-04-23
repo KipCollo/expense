@@ -1,11 +1,15 @@
 package com.example.expense.ui.theme.screens
 
+import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,169 +17,316 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.expense.data.model.Expense
+import com.example.expense.ui.theme.ChartColor1
+import com.example.expense.ui.theme.ChartColor2
+import com.example.expense.ui.theme.ChartColor3
+import com.example.expense.ui.theme.ChartColor4
+import com.example.expense.ui.theme.ChartColor5
+import com.example.expense.ui.theme.ExpenseRed
+import com.example.expense.ui.theme.IncomeGreen
+import java.text.NumberFormat
+import java.util.Calendar
+import java.util.Locale
+import kotlin.math.cos
+import kotlin.math.sin
 
-private val chartColors = listOf(
-    Color(0xFF6200EE),
-    Color(0xFF03DAC6),
-    Color(0xFFFF6D00),
-    Color(0xFF00BCD4),
-    Color(0xFFE91E63),
-    Color(0xFF8BC34A),
-    Color(0xFFFFB300),
-    Color(0xFF607D8B)
+private val pieChartColors = listOf(
+    ChartColor1, ChartColor2, ChartColor3, ChartColor4, ChartColor5,
+    Color(0xFF616161), Color(0xFF484848), Color(0xFF303030)
 )
+
+private enum class Period { Daily, Weekly, Monthly }
 
 @Composable
 fun InsightScreen(
     expenses: List<Expense>,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onAddClick: () -> Unit = {}
 ) {
-    val total = expenses.sumOf { it.amount }
-    val average = if (expenses.isNotEmpty()) total / expenses.size else 0.0
-    val categoryTotals = expenses
-        .groupBy { it.location.ifBlank { "Uncategorized" } }
-        .mapValues { (_, values) -> values.sumOf { it.amount } }
-        .entries
-        .sortedByDescending { it.value }
-    val topCategory = categoryTotals.firstOrNull()?.key ?: "N/A"
+    var selectedPeriod by remember { mutableStateOf(Period.Monthly) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top
-    ) {
-        Text("Insights", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(16.dp))
+    val now = Calendar.getInstance()
+    val filteredExpenses = expenses.filter { expense ->
+        val cal = Calendar.getInstance().apply { time = expense.date }
+        when (selectedPeriod) {
+            Period.Daily -> cal.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+                    cal.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
 
-        InsightCard(title = "Total Spend", value = total)
-        InsightCard(title = "Average Expense", value = average)
+            Period.Weekly -> cal.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+                    cal.get(Calendar.WEEK_OF_YEAR) == now.get(Calendar.WEEK_OF_YEAR)
 
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Top Category", style = MaterialTheme.typography.titleMedium)
-                Text(topCategory, style = MaterialTheme.typography.bodyLarge)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (categoryTotals.isNotEmpty()) {
-            Text("Spending by Category", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(12.dp))
-            SpendingBarChart(categoryTotals = categoryTotals)
-            Spacer(modifier = Modifier.height(16.dp))
-            CategoryLegend(categoryTotals = categoryTotals, total = total)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = onBackClick) {
-            Text("Back")
+            Period.Monthly -> cal.get(Calendar.YEAR) == now.get(Calendar.YEAR) &&
+                    cal.get(Calendar.MONTH) == now.get(Calendar.MONTH)
         }
     }
-}
 
-@Composable
-private fun SpendingBarChart(categoryTotals: List<Map.Entry<String, Double>>) {
-    val maxValue = categoryTotals.maxOfOrNull { it.value } ?: 1.0
+    val totalIncome = filteredExpenses.filter { it.isIncome }.sumOf { it.amount }
+    val totalExpense = filteredExpenses.filter { !it.isIncome }.sumOf { it.amount }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            categoryTotals.forEachIndexed { index, entry ->
-                val fraction = (entry.value / maxValue).toFloat().coerceIn(0f, 1f)
-                val color = chartColors[index % chartColors.size]
+    val categoryTotals = filteredExpenses
+        .filter { !it.isIncome }
+        .groupBy { it.location.ifBlank { "Other" } }
+        .mapValues { (_, list) -> list.sumOf { it.amount } }
+        .entries
+        .sortedByDescending { it.value }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Text(
-                        text = entry.key,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.width(90.dp)
+    val goodPercent = if (totalIncome > 0 && totalExpense > 0) {
+        ((totalIncome - totalExpense) / totalIncome * 100).coerceIn(0.0, 100.0).toInt()
+    } else if (totalExpense == 0.0) {
+        100
+    } else {
+        0
+    }
+
+    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
+
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(
+                currentRoute = NavRoute.Insights,
+                onHomeClick = onBackClick,
+                onHistoryClick = {},
+                onInsightsClick = {},
+                onProfileClick = {}
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+        ) {
+            // Top bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Canvas(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(22.dp)
-                    ) {
-                        val barWidth = size.width * fraction
-                        if (barWidth > 0f) {
-                            drawRoundRect(
-                                color = color,
-                                topLeft = Offset(0f, 0f),
-                                size = Size(barWidth, size.height),
-                                cornerRadius = CornerRadius(6f, 6f)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(
+                    text = "Expenses",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold)
+                )
+                IconButton(onClick = onAddClick) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                }
+            }
+
+            // Period tabs
+            PeriodTabRow(
+                selected = selectedPeriod,
+                onSelect = { selectedPeriod = it },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Totals row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
                     Text(
-                        text = String.format("%.0f", entry.value),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.width(56.dp)
+                        text = "Total Income",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = IncomeGreen,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    Text(
+                        text = currencyFormat.format(totalIncome),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = IncomeGreen,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Total Expense",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = ExpenseRed,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    Text(
+                        text = currencyFormat.format(totalExpense),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = ExpenseRed,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
                 }
             }
-        }
-    }
-}
 
-@Composable
-private fun CategoryLegend(categoryTotals: List<Map.Entry<String, Double>>, total: Double) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Breakdown", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            categoryTotals.forEachIndexed { index, entry ->
-                val color = chartColors[index % chartColors.size]
-                val percent = if (total > 0) (entry.value / total * 100) else 0.0
+            Spacer(modifier = Modifier.height(20.dp))
+
+            if (categoryTotals.isNotEmpty()) {
+                // Analytics header
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 2.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Analytics",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                    )
+                    Text(
+                        text = "View All",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {}
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Pie chart
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    SpendingPieChart(
+                        categoryTotals = categoryTotals,
+                        total = totalExpense,
+                        currencyFormat = currencyFormat,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                Text(
+                    text = "No expense data for this period.",
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // "X% looks good" card
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(12.dp)
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFF0F0F0)),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            drawCircle(color = color)
-                        }
+                        Icon(
+                            imageVector = Icons.Default.ThumbUp,
+                            contentDescription = null,
+                            tint = Color(0xFF555555)
+                        )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = entry.key,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.weight(1f)
+                        text = "$goodPercent% of your expenses looks good",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun PeriodTabRow(
+    selected: Period,
+    onSelect: (Period) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(50))
+            .background(Color(0xFFEEEEEE))
+            .padding(4.dp)
+    ) {
+        Row {
+            Period.entries.forEach { period ->
+                val isSelected = period == selected
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(50))
+                        .background(if (isSelected) Color.Black else Color.Transparent)
+                        .clickable { onSelect(period) }
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text = String.format("%.1f%%", percent),
-                        style = MaterialTheme.typography.bodySmall
+                        text = period.name,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                            color = if (isSelected) Color.White else Color.Black
+                        )
                     )
                 }
             }
@@ -184,15 +335,101 @@ private fun CategoryLegend(categoryTotals: List<Map.Entry<String, Double>>, tota
 }
 
 @Composable
-private fun InsightCard(title: String, value: Double) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(String.format("%.2f", value), style = MaterialTheme.typography.bodyLarge)
+private fun SpendingPieChart(
+    categoryTotals: List<Map.Entry<String, Double>>,
+    total: Double,
+    currencyFormat: NumberFormat,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+        ) {
+            if (total <= 0.0) return@Canvas
+
+            val diameter = size.minDimension * 0.65f
+            val topLeft = Offset(
+                x = (size.width - diameter) / 2f,
+                y = (size.height - diameter) / 2f
+            )
+            val arcSize = Size(diameter, diameter)
+            var startAngle = -90f
+
+            categoryTotals.forEachIndexed { index, entry ->
+                val sweep = (entry.value / total * 360f).toFloat()
+                val color = pieChartColors[index % pieChartColors.size]
+
+                drawArc(
+                    color = color,
+                    startAngle = startAngle,
+                    sweepAngle = sweep,
+                    useCenter = true,
+                    topLeft = topLeft,
+                    size = arcSize
+                )
+
+                // Percentage label inside slice
+                val midAngle = Math.toRadians((startAngle + sweep / 2.0))
+                val cx = size.width / 2f
+                val cy = size.height / 2f
+                val labelRadius = diameter * 0.3f
+                val lx = cx + labelRadius * cos(midAngle).toFloat()
+                val ly = cy + labelRadius * sin(midAngle).toFloat()
+
+                drawContext.canvas.nativeCanvas.drawText(
+                    "${(entry.value / total * 100).toInt()}%",
+                    lx,
+                    ly + 5f,
+                    Paint().apply {
+                        textAlign = Paint.Align.CENTER
+                        textSize = 28f
+                        this.color = Color.White.toArgb()
+                        isFakeBoldText = true
+                    }
+                )
+
+                startAngle += sweep
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Legend
+        categoryTotals.forEachIndexed { index, entry ->
+            val color = pieChartColors[index % pieChartColors.size]
+            val percent = if (total > 0) (entry.value / total * 100).toInt() else 0
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = entry.key,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = currencyFormat.format(entry.value),
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "$percent%",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 11.sp
+                )
+            }
         }
     }
 }

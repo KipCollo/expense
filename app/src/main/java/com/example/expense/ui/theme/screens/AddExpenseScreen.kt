@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,15 +24,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.expense.ui.theme.IncomeGreen
 
 @Composable
 fun AddExpenseScreen(
-    onSaveClick: (String, String, String) -> Boolean,
+    onSaveClick: (String, String, String, Boolean) -> Boolean,
     onCancelClick: () -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+    var isIncome by remember { mutableStateOf(false) }
     var showValidationError by remember { mutableStateOf(false) }
 
     Column(
@@ -39,7 +43,37 @@ fun AddExpenseScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Add Expense", style = MaterialTheme.typography.headlineSmall)
+        Text("Add Transaction", style = MaterialTheme.typography.headlineSmall)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = { isIncome = false },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (!isIncome) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (!isIncome) MaterialTheme.colorScheme.onError
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Text("Expense")
+            }
+            Button(
+                onClick = { isIncome = true },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isIncome) IncomeGreen
+                    else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (isIncome) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Text("Income")
+            }
+        }
 
         OutlinedTextField(
             value = title,
@@ -80,13 +114,13 @@ fun AddExpenseScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = onCancelClick, modifier = Modifier.weight(1f)) {
+            OutlinedButton(onClick = onCancelClick, modifier = Modifier.weight(1f)) {
                 Text("Cancel")
             }
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = {
-                    val saved = onSaveClick(title, amount, location)
+                    val saved = onSaveClick(title, amount, location, isIncome)
                     if (!saved) {
                         showValidationError = true
                     }
