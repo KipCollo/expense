@@ -1,17 +1,12 @@
 package com.example.expense.repository
 
-import org.junit.jupiter.api.Assertions.*
- class ExpenseRepositoryTest {
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-@org.junit.jupiter.api.BeforeEach
- fun setUp() {}
+class ExpenseRepositoryTest {
 
-@org.junit.jupiter.api.AfterEach
- fun tearDown() {}
-
-@org.junit.jupiter.api.Test
- fun getAllExpenses() {}
-
-@org.junit.jupiter.api.Test
- fun insert() {}
+    @Test
+    fun placeholderTest() {
+        assertTrue(true)
+    }
 }

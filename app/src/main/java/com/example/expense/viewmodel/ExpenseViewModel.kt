@@ -1,27 +1,43 @@
 package com.example.expense.viewmodel
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.expense.data.model.Expense
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import com.example.expense.repository.ExpenseRepository
+import java.util.Date
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-class ExpenseViewModel {
-    // Internal mutable state
-    private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
+class ExpenseViewModel(
+    private val repository: ExpenseRepository
+) : ViewModel() {
 
-    // External immutable state
-    val expenses: StateFlow<List<Expense>> = _expenses
+    private val _expenses = mutableStateOf<List<Expense>>(emptyList())
+    val expenses: State<List<Expense>> = _expenses
 
-    // Function to add a new expense
-    fun addExpense(expense: Expense) {
+    init {
         viewModelScope.launch {
-            _expenses.value = _expenses.value + expense
+            repository.allExpenses.collectLatest { list ->
+                _expenses.value = list
+            }
         }
     }
 
-    // Function to remove an expense by ID
-    fun removeExpense(id: Int) {
+    fun addExpense(title: String, amountText: String, location: String) {
+        val amount = amountText.toDoubleOrNull() ?: return
+        if (title.isBlank()) return
+
         viewModelScope.launch {
-            _expenses.value = _expenses.value.filter { it.id != id }
+            repository.insert(
+                Expense(
+                    title = title.trim(),
+                    amount = amount,
+                    date = Date(),
+                    location = location.trim()
+                )
+            )
         }
     }
 }

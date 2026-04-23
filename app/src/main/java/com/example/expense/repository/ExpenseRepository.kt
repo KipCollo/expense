@@ -8,19 +8,23 @@ class ExpenseRepository(private val expenseDao: ExpenseDao) {
 
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
 
-    suspend fun insert(expense: Expense){
+    suspend fun insert(expense: Expense) {
         expenseDao.insertExpense(expense)
     }
 
-    suspend fun update(expense: Expense){
+    suspend fun update(expense: Expense) {
         expenseDao.updateExpense(expense)
     }
 
-    fun searchExpensesByTitle(title: String): Flow<List<Expense>>{
-        return expenseDao.searchByTitle(title)
+    suspend fun delete(expense: Expense) {
+        expenseDao.deleteExpense(expense)
     }
 
-//    fun getExpenseById(id: Int): Expense? {
-//        return expenseDao.getExpenseById(id)
-//    }
+    suspend fun getExpenseById(id: Int): Expense? {
+        return expenseDao.getExpenseById(id)
+    }
+
+    fun searchExpensesByTitle(title: String): Flow<List<Expense>> {
+        return expenseDao.searchByTitle(title)
+    }
 }

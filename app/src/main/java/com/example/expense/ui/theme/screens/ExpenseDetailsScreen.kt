@@ -13,20 +13,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.expense.data.model.Expense
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
-fun ExpenseDetailsScreen (expense: Expense, onBack: () -> Unit) {
-
-    Column(modifier = Modifier
-    .fillMaxSize()
-    .padding(16.dp)) {
-
-        Text("Expense Details", style = MaterialTheme.typography.headlineMedium)
+fun ExpenseDetailsScreen(expense: Expense, onBack: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Expense Details", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
         Text("Title: ${expense.title}")
-        Text("Amount: KES ${expense.amount}")
-        Text("Date: ${SimpleDateFormat("dd MMM yyyy").format(expense.date)}")
-        Text("Location: ${expense.location}")
+        Text("Amount: ${expense.amount}")
+        Text("Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(expense.date)}")
+        Text("Category/Location: ${expense.location.ifBlank { "N/A" }}")
 
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onBack) {

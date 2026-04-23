@@ -1,17 +1,12 @@
 package com.example.expense.viewmodel
 
-import org.junit.jupiter.api.Assertions.*
- class UserViewModelFactoryTest {
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-@org.junit.jupiter.api.BeforeEach
- fun setUp() {}
+class UserViewModelFactoryTest {
 
-@org.junit.jupiter.api.AfterEach
- fun tearDown() {}
-
-@org.junit.jupiter.api.Test
- fun create() {}
-
-@org.junit.jupiter.api.Test
- fun testCreate() {}
+    @Test
+    fun placeholderTest() {
+        assertTrue(true)
+    }
 }
