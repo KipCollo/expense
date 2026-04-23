@@ -25,7 +25,7 @@ class ExpenseViewModel(
         }
     }
 
-    fun addExpense(title: String, amountText: String, location: String): Boolean {
+    fun addExpense(title: String, amountText: String, location: String, isIncome: Boolean = false): Boolean {
         val amount = amountText.toDoubleOrNull() ?: return false
         if (title.isBlank()) return false
         if (amount <= 0.0) return false
@@ -36,7 +36,8 @@ class ExpenseViewModel(
                     title = title.trim(),
                     amount = amount,
                     date = Date(),
-                    location = location.trim()
+                    location = location.trim(),
+                    isIncome = isIncome
                 )
             )
         }
