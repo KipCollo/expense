@@ -1,72 +1,70 @@
 package com.example.expense.ui.theme.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.expense.data.model.Expense
 
 @Composable
-fun InsightScreen() {
-    val insights = listOf(
-        "Reports Generated" to "5 reports created this week",
-        "Login Activity" to "20 logins this month",
-        "Active Time" to "3 hours 45 minutes spent using the app"
-    )
+fun InsightScreen(
+    expenses: List<Expense>,
+    onBackClick: () -> Unit
+) {
+    val total = expenses.sumOf { it.amount }
+    val average = if (expenses.isNotEmpty()) total / expenses.size else 0.0
+    val topLocation = expenses
+        .groupBy { it.location.ifBlank { "Uncategorized" } }
+        .maxByOrNull { (_, values) -> values.sumOf { it.amount } }
+        ?.key
+        ?: "N/A"
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top
     ) {
-        // Title
-        Text(
-            text = "Usage Insights",
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFFFBF00))
-                .padding(12.dp)
-                .padding(bottom = 16.dp)
-        )
+        Text("Insights", style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Insight Cards
-        insights.forEach { (title, subtitle) ->
-            InsightCard(title, subtitle)
+        InsightCard(title = "Total Spend", value = total)
+        InsightCard(title = "Average Expense", value = average)
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Top Category/Location", style = MaterialTheme.typography.titleMedium)
+                Text(topLocation, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = onBackClick) {
+            Text("Back")
         }
     }
 }
 
 @Composable
-fun InsightCard(title: String, subtitle: String) {
+private fun InsightCard(title: String, value: Double) {
     Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(text = subtitle, fontSize = 14.sp)
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(String.format("%.2f", value), style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

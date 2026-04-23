@@ -1,11 +1,12 @@
 package com.example.expense
 
-import org.junit.jupiter.api.Assertions.*
- class MainActivityTest {
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-@org.junit.jupiter.api.Test
- fun onCreate() {}
+class MainActivityTest {
 
-@org.junit.jupiter.api.Test
- fun greetingPreview() {}
+    @Test
+    fun placeholderTest() {
+        assertTrue(true)
+    }
 }
