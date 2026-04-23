@@ -25,9 +25,10 @@ class ExpenseViewModel(
         }
     }
 
-    fun addExpense(title: String, amountText: String, location: String) {
-        val amount = amountText.toDoubleOrNull() ?: return
-        if (title.isBlank()) return
+    fun addExpense(title: String, amountText: String, location: String): Boolean {
+        val amount = amountText.toDoubleOrNull() ?: return false
+        if (title.isBlank()) return false
+        if (amount <= 0.0) return false
 
         viewModelScope.launch {
             repository.insert(
@@ -39,5 +40,6 @@ class ExpenseViewModel(
                 )
             )
         }
+        return true
     }
 }

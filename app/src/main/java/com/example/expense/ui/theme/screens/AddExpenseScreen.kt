@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AddExpenseScreen(
-    onSaveClick: (String, String, String) -> Unit,
+    onSaveClick: (String, String, String) -> Boolean,
     onCancelClick: () -> Unit
 ) {
     var title by remember { mutableStateOf("") }
@@ -86,10 +86,9 @@ fun AddExpenseScreen(
             Spacer(modifier = Modifier.width(12.dp))
             Button(
                 onClick = {
-                    if (title.isBlank() || amount.toDoubleOrNull() == null) {
+                    val saved = onSaveClick(title, amount, location)
+                    if (!saved) {
                         showValidationError = true
-                    } else {
-                        onSaveClick(title, amount, location)
                     }
                 },
                 modifier = Modifier.weight(1f)

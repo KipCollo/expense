@@ -3,6 +3,7 @@ package com.example.expense
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -30,7 +31,8 @@ private object Destinations {
 @Composable
 fun ExpenseApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val database = remember(navController) { AppDatabase.getDatabase(navController.context) }
+    val context = LocalContext.current
+    val database = remember(context) { AppDatabase.getDatabase(context) }
     val repository = remember(database) { ExpenseRepository(database.expenseDao()) }
     val expenseViewModel: ExpenseViewModel = viewModel(
         factory = ExpenseViewModelFactory(repository)
@@ -55,8 +57,11 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
         composable(Destinations.ADD) {
             AddExpenseScreen(
                 onSaveClick = { title, amount, location ->
-                    expenseViewModel.addExpense(title, amount, location)
-                    navController.popBackStack()
+                    val isSaved = expenseViewModel.addExpense(title, amount, location)
+                    if (isSaved) {
+                        navController.popBackStack()
+                    }
+                    isSaved
                 },
                 onCancelClick = { navController.popBackStack() }
             )
