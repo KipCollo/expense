@@ -24,7 +24,8 @@ fun HomeScreen(
     expenses: List<Expense>,
     onAddClick: () -> Unit,
     onInsightsClick: () -> Unit,
-    onExpenseClick: (Int) -> Unit
+    onExpenseClick: (Int) -> Unit,
+    onViewAllClick: () -> Unit = {}
 ) {
     Scaffold(
         floatingActionButton = {
@@ -49,6 +50,14 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clickable(onClick = onInsightsClick)
+                )
+                Text(
+                    text = "View all expenses",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .clickable(onClick = onViewAllClick)
                 )
             }
 
@@ -91,7 +100,7 @@ fun ExpenseCard(
                 style = MaterialTheme.typography.bodyMedium
             )
             if (expense.location.isNotBlank()) {
-                Text("Category/Location: ${expense.location}", style = MaterialTheme.typography.bodySmall)
+                Text("Category: ${expense.location}", style = MaterialTheme.typography.bodySmall)
             }
         }
     }

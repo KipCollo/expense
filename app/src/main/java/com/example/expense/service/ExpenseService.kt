@@ -1,10 +1,10 @@
-package com.example.expense.repository
+package com.example.expense.service
 
 import com.example.expense.data.dao.ExpenseDao
 import com.example.expense.data.model.Expense
 import kotlinx.coroutines.flow.Flow
 
-class ExpenseRepository(private val expenseDao: ExpenseDao) {
+class ExpenseService(private val expenseDao: ExpenseDao) {
 
     val allExpenses: Flow<List<Expense>> = expenseDao.getAllExpenses()
 
