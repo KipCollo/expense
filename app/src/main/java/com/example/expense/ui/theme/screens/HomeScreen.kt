@@ -97,7 +97,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(Color.Black)
                 .padding(paddingValues)
         ) {
             item {
@@ -305,7 +305,7 @@ fun BottomNavBar(
     onInsightsClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = Color.Black) {
         NavigationBarItem(
             selected = currentRoute == NavRoute.Home,
             onClick = onHomeClick,
