@@ -72,6 +72,7 @@ private enum class Period { Daily, Weekly, Monthly }
 fun InsightScreen(
     expenses: List<Expense>,
     onBackClick: () -> Unit,
+    onExpenseClick: () -> Unit = {},
     onAddClick: () -> Unit = {}
 ) {
     var selectedPeriod by remember { mutableStateOf(Period.Monthly) }
@@ -109,11 +110,10 @@ fun InsightScreen(
     Scaffold(
         bottomBar = {
             BottomNavBar(
-                currentRoute = NavRoute.Expenses,
+                currentRoute = NavRoute.Insight,
                 onHomeClick = onBackClick,
-                onHistoryClick = {},
-                onInsightsClick = {},
-                onProfileClick = {}
+                onExpenseClick = onExpenseClick,
+                onInsightClick = {}
             )
         }
     ) { paddingValues ->

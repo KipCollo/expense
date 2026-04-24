@@ -1,4 +1,4 @@
-
+package com.example.expense.ui.theme.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -27,7 +27,9 @@ import java.util.Locale
 fun ExpenseHistoryScreen(
     expenses: List<Expense>,
     onExpenseClick: (Int) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onHomeClick: () -> Unit = {},
+    onInsightClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -41,6 +43,14 @@ fun ExpenseHistoryScreen(
                         )
                     }
                 }
+            )
+        },
+        bottomBar = {
+            BottomNavBar(
+                currentRoute = NavRoute.Expense,
+                onHomeClick = onHomeClick,
+                onExpenseClick = {},
+                onInsightClick = onInsightClick
             )
         }
     ) { paddingValues ->
@@ -99,4 +109,3 @@ private fun HistoryExpenseCard(expense: Expense, onClick: () -> Unit) {
         }
     }
 }
-

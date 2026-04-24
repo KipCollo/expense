@@ -18,12 +18,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -56,10 +55,10 @@ private const val MASKED_CARD_NUMBER = "**** **** **** 1234"
 fun HomeScreen(
     expenses: List<Expense>,
     onAddClick: () -> Unit,
-    onInsightsClick: () -> Unit,
     onExpenseClick: (Int) -> Unit,
+    onInsightClick: () -> Unit,
     onViewAllClick: () -> Unit = {},
-    onHistoryClick: () -> Unit = {}
+    onNavigateExpense: () -> Unit = {}
 ) {
     val totalIncome = expenses.filter { it.isIncome }.sumOf { it.amount }
     val totalExpense = expenses.filter { !it.isIncome }.sumOf { it.amount }
@@ -72,9 +71,8 @@ fun HomeScreen(
             BottomNavBar(
                 currentRoute = NavRoute.Home,
                 onHomeClick = {},
-                onHistoryClick = onHistoryClick,
-                onInsightsClick = onInsightsClick,
-                onProfileClick = {}
+                onExpenseClick = onNavigateExpense,
+                onInsightClick = onInsightClick
             )
         },
         floatingActionButton = {
@@ -295,15 +293,14 @@ private fun ActivityItem(
     }
 }
 
-enum class NavRoute { Home, History, Expenses, Profile }
+enum class NavRoute { Home, Expense, Insight }
 
 @Composable
 fun BottomNavBar(
     currentRoute: NavRoute,
     onHomeClick: () -> Unit,
-    onHistoryClick: () -> Unit,
-    onInsightsClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onExpenseClick: () -> Unit,
+    onInsightClick: () -> Unit
 ) {
     NavigationBar(containerColor = Color.Black) {
         NavigationBarItem(
@@ -313,22 +310,16 @@ fun BottomNavBar(
             label = { Text("Home") }
         )
         NavigationBarItem(
-            selected = currentRoute == NavRoute.History,
-            onClick = onHistoryClick,
-            icon = { Icon(Icons.Default.DateRange, contentDescription = "History") },
-            label = { Text("History") }
+            selected = currentRoute == NavRoute.Expense,
+            onClick = onExpenseClick,
+            icon = { Icon(Icons.Default.Receipt, contentDescription = "Expense") },
+            label = { Text("Expense") }
         )
         NavigationBarItem(
-            selected = currentRoute == NavRoute.Expenses,
-            onClick = onInsightsClick,
-            icon = { Icon(Icons.Default.PieChart, contentDescription = "Expenses") },
-            label = { Text("Expenses") }
-        )
-        NavigationBarItem(
-            selected = currentRoute == NavRoute.Profile,
-            onClick = onProfileClick,
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Profile") },
-            label = { Text("Profile") }
+            selected = currentRoute == NavRoute.Insight,
+            onClick = onInsightClick,
+            icon = { Icon(Icons.Default.PieChart, contentDescription = "Insights") },
+            label = { Text("Insight") }
         )
     }
 }
