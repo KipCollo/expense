@@ -1,5 +1,6 @@
 package com.example.expense.ui.theme.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -59,6 +63,7 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .verticalScroll(rememberScrollState())
             .padding(32.dp),
         verticalArrangement = Arrangement.Center,
@@ -67,7 +72,7 @@ fun RegisterScreen(
         Text(
             text = "Create Account",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
+            color = Color.White
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -75,7 +80,7 @@ fun RegisterScreen(
         Text(
             text = "Sign up to get started",
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = Color.White.copy(alpha = 0.7f)
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -86,9 +91,18 @@ fun RegisterScreen(
                 firstName = it
                 errorMessage = null
             },
-            label = { Text("First Name") },
+            label = { Text("First Name", color = Color.White.copy(alpha = 0.7f)) },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                cursorColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -99,9 +113,18 @@ fun RegisterScreen(
                 lastName = it
                 errorMessage = null
             },
-            label = { Text("Last Name") },
+            label = { Text("Last Name", color = Color.White.copy(alpha = 0.7f)) },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                cursorColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -112,10 +135,19 @@ fun RegisterScreen(
                 email = it
                 errorMessage = null
             },
-            label = { Text("Email") },
+            label = { Text("Email", color = Color.White.copy(alpha = 0.7f)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                cursorColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -126,11 +158,20 @@ fun RegisterScreen(
                 password = it
                 errorMessage = null
             },
-            label = { Text("Password") },
+            label = { Text("Password", color = Color.White.copy(alpha = 0.7f)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                cursorColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -141,11 +182,20 @@ fun RegisterScreen(
                 confirmPassword = it
                 errorMessage = null
             },
-            label = { Text("Confirm Password") },
+            label = { Text("Confirm Password", color = Color.White.copy(alpha = 0.7f)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = Color.White,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.5f),
+                cursorColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+            )
         )
 
         if (errorMessage != null) {
@@ -181,7 +231,11 @@ fun RegisterScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color.Black
+            )
         ) {
             Text("Register", style = MaterialTheme.typography.titleMedium)
         }
@@ -189,7 +243,7 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = onLoginClick) {
-            Text("Already have an account? Login")
+            Text("Already have an account? Login", color = Color.White.copy(alpha = 0.8f))
         }
     }
 }
