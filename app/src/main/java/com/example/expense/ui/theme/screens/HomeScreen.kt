@@ -19,8 +19,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material3.Card
@@ -54,6 +55,8 @@ private const val MASKED_CARD_NUMBER = "**** **** **** 1234"
 @Composable
 fun HomeScreen(
     expenses: List<Expense>,
+    isDarkTheme: Boolean = true,
+    onToggleTheme: () -> Unit = {},
     onAddClick: () -> Unit,
     onExpenseClick: (Int) -> Unit,
     onInsightClick: () -> Unit,
@@ -80,14 +83,14 @@ fun HomeScreen(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape)
-                    .background(Color.Black)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable(onClick = onAddClick),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add",
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -95,7 +98,7 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
         ) {
             item {
@@ -107,10 +110,10 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onToggleTheme) {
                         Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu"
+                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                            contentDescription = if (isDarkTheme) "Switch to light mode" else "Switch to dark mode"
                         )
                     }
                     Text(
@@ -302,7 +305,7 @@ fun BottomNavBar(
     onExpenseClick: () -> Unit,
     onInsightClick: () -> Unit
 ) {
-    NavigationBar(containerColor = Color.Black) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         NavigationBarItem(
             selected = currentRoute == NavRoute.Home,
             onClick = onHomeClick,

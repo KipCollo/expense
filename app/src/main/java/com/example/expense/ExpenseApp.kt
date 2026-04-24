@@ -40,7 +40,11 @@ private object Destinations {
 }
 
 @Composable
-fun ExpenseApp(modifier: Modifier = Modifier) {
+fun ExpenseApp(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = true,
+    onToggleTheme: () -> Unit = {}
+) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val database = remember(context) { AppDatabase.getDatabase(context) }
@@ -104,6 +108,8 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
         composable(Destinations.HOME) {
             HomeScreen(
                 expenses = expenses,
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme,
                 onAddClick = { navController.navigate(Destinations.ADD) },
                 onExpenseClick = { id -> navController.navigate("${Destinations.DETAILS_PREFIX}/$id") },
                 onInsightClick = { navController.navigate(Destinations.INSIGHTS) },
