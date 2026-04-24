@@ -20,7 +20,7 @@ val ChartColor3 = Color(0xFFBDBDBD)
 val ChartColor4 = Color(0xFF424242)
 val ChartColor5 = Color(0xFF9E9E9E)
 
-// Black theme
+// Dark theme
 val BlackBackground = Color(0xFF000000)
 val BlackSurface = Color(0xFF111111)
 val BlackSurfaceVariant = Color(0xFF1C1C1C)
@@ -29,3 +29,13 @@ val BlackOnPrimary = Color(0xFF000000)
 val BlackOnBackground = Color(0xFFFFFFFF)
 val BlackOnSurface = Color(0xFFFFFFFF)
 val BlackOnSurfaceVariant = Color(0xFFAAAAAA)
+
+// Light theme
+val LightBackground = Color(0xFFF5F5F5)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceVariant = Color(0xFFEEEEEE)
+val LightPrimary = Color(0xFF1A1A1A)
+val LightOnPrimary = Color(0xFFFFFFFF)
+val LightOnBackground = Color(0xFF1A1A1A)
+val LightOnSurface = Color(0xFF1A1A1A)
+val LightOnSurfaceVariant = Color(0xFF666666)
