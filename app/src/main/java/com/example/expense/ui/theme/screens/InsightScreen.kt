@@ -218,7 +218,7 @@ fun InsightScreen(
                         text = "View All",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable {}
+                        modifier = Modifier.clickable(onClick = onExpenseClick)
                     )
                 }
 

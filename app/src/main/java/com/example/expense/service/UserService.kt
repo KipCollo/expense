@@ -2,11 +2,8 @@ package com.example.expense.service
 
 import com.example.expense.data.dao.UserDao
 import com.example.expense.data.model.User
-import kotlinx.coroutines.flow.Flow
 
 class UserService(private val userDao: UserDao) {
-
-    val allUsers: Flow<List<User>> = userDao.getAllUsers()
 
     suspend fun register(user: User) {
         userDao.register(user)
