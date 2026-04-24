@@ -105,10 +105,10 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
             HomeScreen(
                 expenses = expenses,
                 onAddClick = { navController.navigate(Destinations.ADD) },
-                onInsightsClick = { navController.navigate(Destinations.INSIGHTS) },
                 onExpenseClick = { id -> navController.navigate("${Destinations.DETAILS_PREFIX}/$id") },
+                onInsightClick = { navController.navigate(Destinations.INSIGHTS) },
                 onViewAllClick = { navController.navigate(Destinations.EXPENSES) },
-                onHistoryClick = { navController.navigate(Destinations.EXPENSES) }
+                onNavigateExpense = { navController.navigate(Destinations.EXPENSES) }
             )
         }
 
@@ -128,7 +128,10 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
         composable(Destinations.INSIGHTS) {
             InsightScreen(
                 expenses = expenses,
-                onBackClick = { navController.popBackStack() },
+                onBackClick = { navController.navigate(Destinations.HOME) {
+                    popUpTo(Destinations.HOME) { inclusive = false }
+                }},
+                onExpenseClick = { navController.navigate(Destinations.EXPENSES) },
                 onAddClick = { navController.navigate(Destinations.ADD) }
             )
         }
@@ -137,7 +140,11 @@ fun ExpenseApp(modifier: Modifier = Modifier) {
             ExpenseHistoryScreen(
                 expenses = expenses,
                 onExpenseClick = { id -> navController.navigate("${Destinations.DETAILS_PREFIX}/$id") },
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onHomeClick = { navController.navigate(Destinations.HOME) {
+                    popUpTo(Destinations.HOME) { inclusive = false }
+                }},
+                onInsightClick = { navController.navigate(Destinations.INSIGHTS) }
             )
         }
 
