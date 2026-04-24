@@ -120,7 +120,7 @@ fun InsightScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -230,7 +230,7 @@ fun InsightScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     SpendingPieChart(
@@ -259,7 +259,7 @@ fun InsightScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Row(
@@ -270,13 +270,13 @@ fun InsightScreen(
                         modifier = Modifier
                             .size(44.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFF0F0F0)),
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.ThumbUp,
                             contentDescription = null,
-                            tint = Color(0xFF555555)
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
@@ -301,7 +301,7 @@ private fun PeriodTabRow(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(Color(0xFFEEEEEE))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(4.dp)
     ) {
         Row {
@@ -311,7 +311,7 @@ private fun PeriodTabRow(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(50))
-                        .background(if (isSelected) Color.Black else Color.Transparent)
+                        .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
                         .clickable { onSelect(period) }
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
@@ -320,7 +320,8 @@ private fun PeriodTabRow(
                         text = period.name,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (isSelected) Color.White else Color.Black
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
