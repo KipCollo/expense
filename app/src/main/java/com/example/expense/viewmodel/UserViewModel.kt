@@ -24,7 +24,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
                     firstName = firstName,
                     lastName = lastName,
                     email = email,
-                    password = PasswordUtils.hash(password)
+                    password = PasswordUtils.hash(password, email)
                 )
                 userService.register(user)
                 _registerResult.value = RegisterState.Success
@@ -36,7 +36,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
-            val user = userService.login(email, PasswordUtils.hash(password))
+            val user = userService.login(email, PasswordUtils.hash(password, email))
             _loginResult.value = user != null
         }
     }

@@ -206,6 +206,7 @@ fun InsightScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clickable(onClick = onExpenseClick)
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -217,8 +218,7 @@ fun InsightScreen(
                     Text(
                         text = "View All",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable(onClick = onExpenseClick)
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
