@@ -15,6 +15,7 @@ composeBom = "2024.09.00"
 navigationCompose = "2.7.7"
 
 room = "2.7.1"
+tvMaterial = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
