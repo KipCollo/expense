@@ -324,32 +324,3 @@ fun BottomNavBar(
     }
 }
 
-@Composable
-fun ExpenseCard(
-    expense: Expense,
-    onClick: () -> Unit
-) {
-    val currencyFormat = NumberFormat.getCurrencyInstance(Locale.US)
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(expense.title, style = MaterialTheme.typography.titleMedium)
-            Text(
-                "Amount: ${currencyFormat.format(expense.amount)}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                "Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(expense.date)}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            if (expense.location.isNotBlank()) {
-                Text("Category: ${expense.location}", style = MaterialTheme.typography.bodySmall)
-            }
-        }
-    }
-}

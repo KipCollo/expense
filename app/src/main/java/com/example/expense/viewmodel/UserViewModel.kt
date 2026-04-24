@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.expense.data.model.User
 import com.example.expense.service.UserService
+import com.example.expense.util.PasswordUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
                     firstName = firstName,
                     lastName = lastName,
                     email = email,
-                    password = password
+                    password = PasswordUtils.hash(password, email)
                 )
                 userService.register(user)
                 _registerResult.value = RegisterState.Success
@@ -35,7 +36,7 @@ class UserViewModel(private val userService: UserService) : ViewModel() {
 
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
-            val user = userService.login(email, password)
+            val user = userService.login(email, PasswordUtils.hash(password, email))
             _loginResult.value = user != null
         }
     }

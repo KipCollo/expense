@@ -25,6 +25,7 @@ fun ExpenseDetailsScreen(expense: Expense, onBack: () -> Unit) {
         Text("Expense Details", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
         Text("Title: ${expense.title}")
+        Text("Type: ${if (expense.isIncome) "Income" else "Expense"}")
         Text("Amount: ${expense.amount}")
         Text("Date: ${SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(expense.date)}")
         Text("Category/Location: ${expense.location.ifBlank { "N/A" }}")

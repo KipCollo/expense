@@ -92,7 +92,7 @@ private fun HistoryExpenseCard(expense: Expense, onClick: () -> Unit) {
     ) {
         Text(expense.title, style = MaterialTheme.typography.titleMedium)
         Text(
-            text = "Amount: ${String.format("%.2f", expense.amount)}",
+            text = "Amount: ${String.format(Locale.US, "%.2f", expense.amount)}",
             style = MaterialTheme.typography.bodyMedium
         )
         Text(

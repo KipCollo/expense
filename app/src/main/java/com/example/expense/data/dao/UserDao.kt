@@ -7,13 +7,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.expense.data.model.User
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user:User)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun register(user: User)
@@ -31,7 +27,7 @@ interface UserDao {
     suspend fun update(user: User)
 
     @Query("SELECT * FROM users")
-    fun getAllUsers(): Flow<List<User>>
+    suspend fun getAllUsers(): List<User>
 
     @Delete
     suspend fun delete(user: User)
